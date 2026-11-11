@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>منصة ضرب وناتج</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&family=Share+Tech+Mono&display=swap');
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+background:#020000;
+color:#ff0000;
+font-family:Cairo,sans-serif;
+min-height:100vh;
+overflow-x:hidden;
+}
+
+body:before{
+content:"";
+position:fixed;
+inset:0;
+z-index:9;
+pointer-events:none;
+background:repeating-linear-gradient(
+0deg,transparent 0px,transparent 2px,
+rgba(255,0,0,.12) 3px);
+}
+
+body:after{
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+background:radial-gradient(circle,transparent,#200000);
+}
+
+.container{
+max-width:520px;
+margin:auto;
+padding:20px;
+position:relative;
+z-index:2;
+display: none; /* مخفي في البداية حتى يتم الضغط على الزر */
+}
+
+/* شاشة الترحيب الأولية والألوان المطلوبة */
+#welcome-screen {
+position: fixed;
+inset: 0;
+background: #0D0D0E; /* الأسود الأساسي لخلفية شاشة الترحيب */
+z-index: 9998;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 20px;
+text-align: center;
+}
+
+#welcome-screen h1 {
+color: #F3F4F6; /* لون النصوص الأساسية */
+font-size: 24px;
+margin-bottom: 25px;
+text-shadow: 0 0 10px rgba(255, 107, 0, 0.3);
+}
+
+.warning{
+text-align:center;
+font-size:28px;
+font-weight:900;
+margin:30px 0 20px 0;
+text-shadow:0 0 20px red;
+animation:glitch 0.2s infinite;
+}
+
+@keyframes glitch{
+0%{transform:translate(0)}
+20%{transform:translate(-2px, 2px)}
+40%{transform:translate(-2px, -2px)}
+60%{transform:translate(2px, 2px)}
+80%{transform:translate(2px, -2px)}
+100%{transform:translate(0)}
+}
+
+.panel{
+background:rgba(15,0,0,.98);
+border:2px solid #ff0000;
+padding:18px;
+box-shadow:0 0 40px #800000;
+}
+
+.heading{
+color:white;
+text-align:center;
+font:20px 'Share Tech Mono';
+margin-bottom:15px;
+text-shadow:0 0 10px red;
+}
+
+.data{
+display:block;
+margin-top:15px;
+animation:appear .5s ease;
+}
+
+@keyframes appear{
+from{opacity:0;transform:translateY(15px)}
+to{opacity:1;transform:translateY(0)}
+}
+
+.info{
+background:#1a0000;
+border-right:3px solid red;
+padding:13px;
+margin:10px 0;
+color:#ff6666;
+font-size:14px;
+}
+
+.info b{color:white}
+
+.status{
+font:12px/2 'Share Tech Mono';
+color:#ff5555;
+text-align:left;
+direction:ltr;
+min-height:100px;
+overflow:hidden;
+margin-top:15px;
+}
+
+.progress{
+height:7px;
+background:#260000;
+margin:15px 0;
+}
+
+.bar{
+height:100%;
+width:0;
+background:red;
+box-shadow:0 0 20px red;
+transition:width .2s;
+}
+
+.alert{
+padding:12px;
+margin:10px 0;
+background:#2b0000;
+border:1px solid #ff0000;
+color:#ff6666;
+font-size:13px;
+animation:appear .3s;
+}
+
+.terminal{
+background:#050000;
+border:1px solid #600000;
+padding:12px;
+margin-top:20px;
+font:11px/2 'Share Tech Mono';
+direction:ltr;
+text-align:left;
+color:#ff4444;
+}
+
+.matrix{
+text-align:center;
+color:#800000;
+font:11px/2 'Share Tech Mono';
+margin:25px 0;
+}
+
+/* زر شاشة الترحيب والألوان الجديدة */
+.sound{
+background: #FF6B00; /* البرتقالي الأساسي (لون الهوية والأزرار) */
+color: #F3F4F6; /* لون النصوص الأساسية */
+border: none;
+padding: 14px 28px;
+font-family: Cairo, sans-serif;
+font-size: 16px;
+font-weight: bold;
+cursor: pointer;
+box-shadow: 0 0 15px rgba(255, 107, 0, 0.3); /* تأثير التوهج البرتقالي */
+border-radius: 8px;
+animation: pulseBtn 1s infinite alternate;
+transition: background 0.3s ease;
+}
+
+.sound:hover {
+background: #E05E00; /* البرتقالي الداكن عند التمرير Hover */
+}
+
+@keyframes pulseBtn {
+from { transform: scale(1); box-shadow: 0 0 10px rgba(255, 107, 0, 0.3); }
+to { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 107, 0, 0.6); }
+}
+
+.flash{
+animation:flash .12s infinite;
+}
+
+@keyframes flash{
+0%,100%{background:#020000}
+50%{background:#300000}
+}
+</style>
+</head>
+
+<body>
+
+<!-- شاشة البداية والترحيب -->
+<div id="welcome-screen">
+    <h1>أهلاً بك في منصة ضرب وناتج</h1>
+    <button class="sound" id="soundBtn">اضغط هنا للبدء</button>
+</div>
+
+<div class="container" id="mainContainer">
+
+<div class="warning" id="warning">
+⚠ تم اختراق الهاتف بنجاح ⚠
+</div>
+
+<div class="panel">
+
+<div class="heading">TARGET PROFILE</div>
+
+<div class="data" id="data">
+<div class="info">
+اسم المستهدف: <b>محمد</b>
+</div>
+
+<div class="info">
+سنة الميلاد: <b>2011</b>
+</div>
+
+<div class="info">
+اسم الاسرة: <b>ال بسيس</b>
+</div>
+</div>
+
+<div id="alerts"></div>
+
+<div class="status" id="status"></div>
+
+<div class="progress">
+<div class="bar" id="bar"></div>
+</div>
+
+<div class="terminal" id="terminal">
+ACCESS_LOG: ROOT_ACCESS<br>
+BYPASSING FIREWALL...<br>
+UPLOADING DATA TO EXTERNAL SERVER...<br>
+SYSTEM: LOCKED
+</div>
+
+</div>
+
+<div class="matrix">
+010101 SYSTEM FAILURE 010101<br>
+CRITICAL OVERRIDE ACTIVE<br>
+010101010101010101010101
+</div>
+
+</div>
+
+<script>
+let audioCtx = null;
+let sirenTimer = null;
+let isPlaying = false;
+
+function playSiren() {
+    if (isPlaying) return;
+    
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    
+    audioCtx = new AudioContext();
+    audioCtx.resume();
+    isPlaying = true;
+
+    const osc1 = audioCtx.createOscillator();
+    const osc2 = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    osc1.type = "sawtooth";
+    osc2.type = "square";
+
+    gainNode.gain.setValueAtTime(0.8, audioCtx.currentTime);
+
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    osc1.start();
+    osc2.start();
+
+    let high = false;
+    sirenTimer = setInterval(() => {
+        if (!audioCtx || !isPlaying) return;
+        const now = audioCtx.currentTime;
+        high = !high;
+        osc1.frequency.setValueAtTime(high ? 2200 : 700, now);
+        osc2.frequency.setValueAtTime(high ? 1100 : 350, now);
+    }, 150);
+}
+
+const status = document.getElementById("status");
+const bar = document.getElementById("bar");
+const alerts = document.getElementById("alerts");
+
+const messages = [
+"> INITIATING KERNEL OVERRIDE...",
+"> BYPASSING SECURE ENCLAVE...",
+"> DOWNLOADING DEVICE PHOTOS...",
+"> EXFILTRATING CONTACTS & MESSAGES...",
+"> BANKING CREDENTIALS CAPTURED...",
+"> LOCKING DEVICE ENCRYPTION...",
+"> UPLOAD COMPLETE."
+];
+
+const warnings = [
+"📸 تم سحب جميع الصور التي في الهاتف بنجاح",
+"💳 تم سحب جميع المبالغ والبطاقات البنكيه ",
+"🔐 تم سحب جميع الحسابات وبيانات الهاتف بنجاح",
+];
+
+let progress = 0;
+let messageIndex = 0;
+let warningIndex = 0;
+
+function addMessage(){
+if(messageIndex < messages.length){
+status.innerHTML += messages[messageIndex] + "<br>";
+messageIndex++;
+}
+}
+
+function addAlert(text){
+const el = document.createElement("div");
+el.className = "alert";
+el.textContent = text;
+alerts.prepend(el);
+}
+
+// دالة تشغيل النظام بالكامل عند الضغط على الزر
+document.getElementById("soundBtn").onclick = () => {
+    // 1. إخفاء شاشة الترحيب وإظهار المحتوى المخفي
+    document.getElementById("welcome-screen").style.display = "none";
+    document.getElementById("mainContainer").style.display = "block";
+
+    // 2. تشغيل صوت الصفارة
+    playSiren();
+
+    // 3. تشغيل الوظائف الأساسية والعدادات البرمجية
+    addMessage();
+
+    const timer = setInterval(()=>{
+        progress += 4;
+        bar.style.width = progress + "%";
+
+        if(progress % 12 === 0){
+            addMessage();
+        }
+
+        if(progress % 16 === 0 && warningIndex < warnings.length){
+            addAlert(warnings[warningIndex]);
+            warningIndex++;
+        }
+
+        if(progress >= 100){
+            clearInterval(timer);
+            document.body.classList.add("flash");
+        }
+    }, 120);
+};
+</script>
+
+</body>
+</html>
