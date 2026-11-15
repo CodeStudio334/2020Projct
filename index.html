@@ -2,387 +2,211 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>منصة ضرب وناتج</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ur garden snap core - ur garden snap core</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&family=Share+Tech+Mono&display=swap');
-
-*{box-sizing:border-box}
-
-body{
-margin:0;
-background:#020000;
-color:#ff0000;
-font-family:Cairo,sans-serif;
-min-height:100vh;
-overflow-x:hidden;
+/* --- المتغيرات اللونية الأساسية --- */
+:root {
+  --bg-color: #050509; 
+  --bg-gradient: radial-gradient(circle at center, #101525 0%, #050509 70%);
+  --card-bg: rgba(20, 25, 40, 0.65); 
+  --card-border: rgba(255, 255, 255, 0.06);
+  --accent-color: #00c3ff; 
+  --text-main: #e0e0e6; 
+  --text-muted: #a0a0b0; 
+  --price-color: #ffd700; 
+  --whatsapp-green: #25D366;
 }
 
-body:before{
-content:"";
-position:fixed;
-inset:0;
-z-index:9;
-pointer-events:none;
-background:repeating-linear-gradient(
-0deg,transparent 0px,transparent 2px,
-rgba(255,0,0,.12) 3px);
+* { box-sizing: border-box; transition: all 0.3s ease; }
+
+body {
+  margin: 0; padding: 0;
+  font-family: 'Tajawal', sans-serif;
+  background-color: var(--bg-color);
+  background-image: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex; justify-content: center;
+  overflow-x: hidden;
+  position: relative;
 }
 
-body:after{
-content:"";
-position:fixed;
-inset:0;
-pointer-events:none;
-background:radial-gradient(circle,transparent,#200000);
+/* كانفاس الثلج */
+#snow-canvas {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 1; pointer-events: none;
 }
 
-.container{
-max-width:520px;
-margin:auto;
-padding:20px;
-position:relative;
-z-index:2;
-display: none; /* مخفي في البداية حتى يتم الضغط على الزر */
+.container {
+  width: 100%; max-width: 800px;
+  padding: 40px 20px;
+  position: relative; z-index: 10;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeInContainer 0.8s forwards 0.2s;
 }
 
-/* شاشة الترحيب الأولية والألوان المطلوبة */
-#welcome-screen {
-position: fixed;
-inset: 0;
-background: #0D0D0E; /* الأسود الأساسي لخلفية شاشة الترحيب */
-z-index: 9998;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-padding: 20px;
-text-align: center;
+@keyframes fadeInContainer { to { opacity: 1; transform: translateY(0); } }
+
+/* الهيدر والشعار */
+.header { text-align: center; margin-bottom: 50px; }
+
+.logo-image {
+  max-width: 120px; height: auto;
+  margin-bottom: 15px;
+  filter: drop-shadow(0 0 10px rgba(0, 195, 255, 0.5)); /* توهج للشعار */
 }
 
-#welcome-screen h1 {
-color: #F3F4F6; /* لون النصوص الأساسية */
-font-size: 24px;
-margin-bottom: 25px;
-text-shadow: 0 0 10px rgba(255, 107, 0, 0.3);
+.subtitle { font-size: 16px; color: var(--text-muted); }
+
+/* البطاقة الرئيسية */
+.product-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-radius: 24px; padding: 50px 40px;
+  text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
-.warning{
-text-align:center;
-font-size:28px;
-font-weight:900;
-margin:30px 0 20px 0;
-text-shadow:0 0 20px red;
-animation:glitch 0.2s infinite;
+.features-list { list-style: none; padding: 0; margin-bottom: 40px; display: inline-block; text-align: right; }
+.features-list li { font-size: 17px; margin-bottom: 15px; display: flex; align-items: center; }
+.feature-icon { color: var(--accent-color); margin-left: 12px; text-shadow: 0 0 5px var(--accent-color); }
+
+.purchase-count {
+  font-size: 14px; color: var(--accent-color);
+  background: rgba(0, 195, 255, 0.1);
+  padding: 5px 15px; border-radius: 20px;
+  border: 1px solid rgba(0, 195, 255, 0.2);
+  margin-bottom: 15px; display: inline-block;
 }
 
-@keyframes glitch{
-0%{transform:translate(0)}
-20%{transform:translate(-2px, 2px)}
-40%{transform:translate(-2px, -2px)}
-60%{transform:translate(2px, 2px)}
-80%{transform:translate(2px, -2px)}
-100%{transform:translate(0)}
+.price-tag { font-size: 48px; font-weight: 800; color: var(--price-color); margin-bottom: 25px; }
+
+.cta-button {
+  background: linear-gradient(135deg, var(--accent-color), #0099ff);
+  color: #000; border: none; padding: 16px 30px;
+  width: 100%; max-width: 300px; border-radius: 14px;
+  font-size: 18px; font-weight: 700; cursor: pointer;
 }
 
-.panel{
-background:rgba(15,0,0,.98);
-border:2px solid #ff0000;
-padding:18px;
-box-shadow:0 0 40px #800000;
+/* المودالات */
+.modal {
+  display: none; position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+  backdrop-filter: blur(8px); z-index: 2000;
+  justify-content: center; align-items: center;
+}
+.modal.show { display: flex; }
+
+.modal-content {
+  background: #10121a; border: 1px solid var(--card-border);
+  padding: 40px; border-radius: 24px; width: 90%; max-width: 450px; text-align: center;
 }
 
-.heading{
-color:white;
-text-align:center;
-font:20px 'Share Tech Mono';
-margin-bottom:15px;
-text-shadow:0 0 10px red;
+.warning-box {
+  background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.2);
+  color: #ffe082; padding: 20px; border-radius: 14px; margin-bottom: 30px; text-align: right;
 }
 
-.data{
-display:block;
-margin-top:15px;
-animation:appear .5s ease;
+.confirm-btn { 
+  background: linear-gradient(135deg, var(--accent-color), #0099ff);
+  color: #000; padding: 14px; border-radius: 12px; width: 100%; border: none; font-weight: 700; cursor: pointer;
 }
 
-@keyframes appear{
-from{opacity:0;transform:translateY(15px)}
-to{opacity:1;transform:translateY(0)}
-}
+.cancel-btn { background: rgba(255,255,255,0.05); color: #777; border: none; padding: 10px; margin-top: 10px; cursor: pointer; width: 100%; border-radius: 10px; }
 
-.info{
-background:#1a0000;
-border-right:3px solid red;
-padding:13px;
-margin:10px 0;
-color:#ff6666;
-font-size:14px;
-}
+.iban-box { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; color: var(--accent-color); font-family: monospace; display: block; margin: 10px 0; }
 
-.info b{color:white}
+.whatsapp-btn { background: var(--whatsapp-green); color: #fff; padding: 14px; border-radius: 12px; width: 100%; border: none; font-weight: 700; cursor: pointer; margin-top: 15px; }
 
-.status{
-font:12px/2 'Share Tech Mono';
-color:#ff5555;
-text-align:left;
-direction:ltr;
-min-height:100px;
-overflow:hidden;
-margin-top:15px;
-}
-
-.progress{
-height:7px;
-background:#260000;
-margin:15px 0;
-}
-
-.bar{
-height:100%;
-width:0;
-background:red;
-box-shadow:0 0 20px red;
-transition:width .2s;
-}
-
-.alert{
-padding:12px;
-margin:10px 0;
-background:#2b0000;
-border:1px solid #ff0000;
-color:#ff6666;
-font-size:13px;
-animation:appear .3s;
-}
-
-.terminal{
-background:#050000;
-border:1px solid #600000;
-padding:12px;
-margin-top:20px;
-font:11px/2 'Share Tech Mono';
-direction:ltr;
-text-align:left;
-color:#ff4444;
-}
-
-.matrix{
-text-align:center;
-color:#800000;
-font:11px/2 'Share Tech Mono';
-margin:25px 0;
-}
-
-/* زر شاشة الترحيب والألوان الجديدة */
-.sound{
-background: #FF6B00; /* البرتقالي الأساسي (لون الهوية والأزرار) */
-color: #F3F4F6; /* لون النصوص الأساسية */
-border: none;
-padding: 14px 28px;
-font-family: Cairo, sans-serif;
-font-size: 16px;
-font-weight: bold;
-cursor: pointer;
-box-shadow: 0 0 15px rgba(255, 107, 0, 0.3); /* تأثير التوهج البرتقالي */
-border-radius: 8px;
-animation: pulseBtn 1s infinite alternate;
-transition: background 0.3s ease;
-}
-
-.sound:hover {
-background: #E05E00; /* البرتقالي الداكن عند التمرير Hover */
-}
-
-@keyframes pulseBtn {
-from { transform: scale(1); box-shadow: 0 0 10px rgba(255, 107, 0, 0.3); }
-to { transform: scale(1.05); box-shadow: 0 0 25px rgba(255, 107, 0, 0.6); }
-}
-
-.flash{
-animation:flash .12s infinite;
-}
-
-@keyframes flash{
-0%,100%{background:#020000}
-50%{background:#300000}
-}
 </style>
 </head>
-
 <body>
 
-<!-- شاشة البداية والترحيب -->
-<div id="welcome-screen">
-    <h1>أهلاً بك في عالم الفيمبويز +18</h1>
-    <button class="sound" id="soundBtn">اضغط هنا للبدء</button>
+<canvas id="snow-canvas"></canvas>
+
+<div class="container">
+  <header class="header">
+    <img src="logo.png" alt="ur garden" class="logo-image">
+    <p class="subtitle">النظام السري لزيادة سكور السناب شات </p>
+  </header>
+
+  <main>
+    <article class="product-card">
+      <h1 class="product-title">بوت السكور الاحترافي</h1>
+      <ul class="features-list">
+        <li><span class="feature-icon">⚡</span> سرعة خيالية: يوصل مليون نقطة خلال يومين </li>
+        <li><span class="feature-icon">🛡️</span> أمان مطلق: نظام محمي 100% وضد الحظر</li>
+        <li><span class="feature-icon">🎯</span> سهولة تامة: إعداد وتشغيل بضغطة زر</li>
+      </ul>
+      <div class="purchase-count">✔ تم شراؤه أكثر من 120 مرة</div>
+      <div class="price-tag">30 <small style="font-size: 16px;">ريال سعودي</small></div>
+      <button class="cta-button" onclick="openModal('warningModal')">اطلب الآن</button>
+    </article>
+  </main>
 </div>
 
-<div class="container" id="mainContainer">
-
-<div class="warning" id="warning">
-تم اختراق الهاتف بنجاح
+<div id="warningModal" class="modal">
+  <div class="modal-content">
+    <h3>⚠️ شروط الطلب</h3>
+    <div class="warning-box">
+      <p>🛑 المبلغ غير قابل للاسترجاع نهائياً.</p>
+      <p>⏳ ضمان المنتج 24 ساعة فقط.</p>
+    </div>
+    <button class="confirm-btn" onclick="goToPayment()">أوافق على الشروط وأكمل للدفع</button>
+    <button class="cancel-btn" onclick="closeModal('warningModal')">إلغاء</button>
+  </div>
 </div>
 
-<div class="panel">
-
-<div class="heading">TARGET PROFILE</div>
-
-<div class="data" id="data">
-<div class="info">
-اسم المستهدف: <b>حاتم عبدالعزيز الزهراني</b>
-</div>
-
-<div class="info">
-الموقع: <b>الرياض</b>
-</div>
-
-<div class="info">
-رقم الهاتف: <b>0501231963</b>
-</div>
-
-<div class="info">
-نوع الهاتف: <b>IOS</b>
-</div>
-</div>
-
-<div id="alerts"></div>
-
-<div class="status" id="status"></div>
-
-<div class="progress">
-<div class="bar" id="bar"></div>
-</div>
-
-<div class="terminal" id="terminal">
-ACCESS_LOG: ROOT_ACCESS<br>
-BYPASSING FIREWALL...<br>
-UPLOADING DATA TO EXTERNAL SERVER...<br>
-SYSTEM: LOCKED
-</div>
-
-</div>
-
-<div class="matrix">
-010101 SYSTEM FAILURE 010101<br>
-CRITICAL OVERRIDE ACTIVE<br>
-010101010101010101010101
-</div>
-
+<div id="paymentModal" class="modal">
+  <div class="modal-content">
+    <h3>💳 تفاصيل التحويل</h3>
+    <div style="text-align: right;">
+      <p>المصرف: الراجحي</p>
+      <p>الآيبان:</p>
+      <code class="iban-box">SA3280205898939222121017</code>
+    </div>
+    <button class="whatsapp-btn" onclick="goWhats()">تواصل واتساب بعد التحويل</button>
+    <button class="cancel-btn" onclick="closeModal('paymentModal')">إغلاق</button>
+  </div>
 </div>
 
 <script>
-let audioCtx = null;
-let sirenTimer = null;
-let isPlaying = false;
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function goToPayment() { closeModal('warningModal'); setTimeout(() => openModal('paymentModal'), 300); }
 
-function playSiren() {
-    if (isPlaying) return;
-    
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-    
-    audioCtx = new AudioContext();
-    audioCtx.resume();
-    isPlaying = true;
-
-    const osc1 = audioCtx.createOscillator();
-    const osc2 = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-
-    osc1.type = "sawtooth";
-    osc2.type = "square";
-
-    gainNode.gain.setValueAtTime(0.8, audioCtx.currentTime);
-
-    osc1.connect(gainNode);
-    osc2.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    osc1.start();
-    osc2.start();
-
-    let high = false;
-    sirenTimer = setInterval(() => {
-        if (!audioCtx || !isPlaying) return;
-        const now = audioCtx.currentTime;
-        high = !high;
-        osc1.frequency.setValueAtTime(high ? 2200 : 700, now);
-        osc2.frequency.setValueAtTime(high ? 1100 : 350, now);
-    }, 150);
+function goWhats(){
+  window.location.href="https://wa.me/966532650439?text="+encodeURIComponent("تم التحويل، أرغب باستلام البوت");
 }
 
-const status = document.getElementById("status");
-const bar = document.getElementById("bar");
-const alerts = document.getElementById("alerts");
-
-const messages = [
-"> INITIATING KERNEL OVERRIDE...",
-"> BYPASSING SECURE ENCLAVE...",
-"> DOWNLOADING DEVICE PHOTOS...",
-"> EXFILTRATING CONTACTS & MESSAGES...",
-"> BANKING CREDENTIALS CAPTURED...",
-"> LOCKING DEVICE ENCRYPTION...",
-"> UPLOAD COMPLETE."
-];
-
-const warnings = [
-"📸 تم سحب جميع الصور التي في الهاتف بنجاح",
-"💳 تم سحب جميع المبالغ والبطاقات البنكيه ",
-"🔐 تم سحب جميع الحسابات وبيانات الهاتف بنجاح",
-];
-
-let progress = 0;
-let messageIndex = 0;
-let warningIndex = 0;
-
-function addMessage(){
-if(messageIndex < messages.length){
-status.innerHTML += messages[messageIndex] + "<br>";
-messageIndex++;
+// تأثير الثلج
+const canvas = document.getElementById('snow-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function initSnow() {
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  particles = [];
+  for(let i=0; i<100; i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*3, d: Math.random()*1});
 }
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "rgba(255,255,255,0.2)";
+  ctx.beginPath();
+  for(let p of particles) {
+    ctx.moveTo(p.x, p.y); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2, true);
+    p.y += p.d + 0.5; if(p.y > canvas.height) p.y = -10;
+  }
+  ctx.fill(); requestAnimationFrame(draw);
 }
-
-function addAlert(text){
-const el = document.createElement("div");
-el.className = "alert";
-el.textContent = text;
-alerts.prepend(el);
-}
-
-// دالة تشغيل النظام بالكامل عند الضغط على الزر
-document.getElementById("soundBtn").onclick = () => {
-    // 1. إخفاء شاشة الترحيب وإظهار المحتوى المخفي
-    document.getElementById("welcome-screen").style.display = "none";
-    document.getElementById("mainContainer").style.display = "block";
-
-    // 2. تشغيل صوت الصفارة
-    playSiren();
-
-    // 3. تشغيل الوظائف الأساسية والعدادات البرمجية
-    addMessage();
-
-    const timer = setInterval(()=>{
-        progress += 4;
-        bar.style.width = progress + "%";
-
-        if(progress % 12 === 0){
-            addMessage();
-        }
-
-        if(progress % 16 === 0 && warningIndex < warnings.length){
-            addAlert(warnings[warningIndex]);
-            warningIndex++;
-        }
-
-        if(progress >= 100){
-            clearInterval(timer);
-            document.body.classList.add("flash");
-        }
-    }, 120);
-};
+initSnow(); draw();
+window.onresize = initSnow;
 </script>
-
 </body>
 </html>
